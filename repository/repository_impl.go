@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"khaira-admin/domain"
 	"khaira-admin/logger"
 )
@@ -21,6 +22,7 @@ func (repo *RepositoryImpl) Login(ctx context.Context, db *sql.DB, entity *domai
 	var response domain.Admin
 	err := row.Scan(&response.Id, &response.Username, &response.Password)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 
@@ -153,13 +155,18 @@ func (repo *RepositoryImpl) UpdateOrder(ctx context.Context, tx *sql.Tx, entity 
 	result, err := tx.ExecContext(ctx, query, entity.Status, id)
 	if err != nil {
 		logger.GetLogger("repository-log").Log("update orders", "error", err.Error())
-		return err
+		return sql.ErrNoRows
 	}
 
 	rowAff, err := result.RowsAffected()
-	if err != nil || rowAff == 0 {
+	if err != nil {
 		logger.GetLogger("repository-log").Log("update orders", "error", err.Error())
-		return err
+		return sql.ErrNoRows
+	}
+
+	if rowAff == 0 {
+		logger.GetLogger("repository-log").Log("update orders", "error", "err.Error()")
+		return sql.ErrNoRows
 	}
 
 	return nil
