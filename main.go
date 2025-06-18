@@ -34,5 +34,12 @@ func NewServer(handler controller.Controller) *fiber.App {
 }
 
 func main() {
+	app, cleanup, err := InitServer()
+	if err != nil {
+		panic(err)
+	}
 
+	defer cleanup()
+
+	app.Listen(":8080")
 }
