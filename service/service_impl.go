@@ -154,3 +154,12 @@ func (svc *ServiceImpl) DeleteOrder(ctx context.Context, id string) error {
 
 	return nil
 }
+
+func (svc *ServiceImpl) GetUsers(ctx context.Context) (data []*domain.Users, err error) {
+	result, err := svc.repo.GetUsers(ctx, svc.db)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}

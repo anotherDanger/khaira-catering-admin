@@ -15,4 +15,5 @@ type Service interface {
 	GetOrders(ctx context.Context) ([]*domain.Orders, error)
 	UpdateOrder(ctx context.Context, entity *domain.Orders, id string) error
 	DeleteOrder(ctx context.Context, id string) error
+	GetUsers(ctx context.Context) ([]*domain.Users, error)
 }
