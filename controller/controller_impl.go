@@ -156,3 +156,15 @@ func (ctrl *ControllerImpl) DeleteOrder(c *fiber.Ctx) error {
 	}
 	return web.SuccessResponse[interface{}](c, fiber.StatusNoContent, "Order successfully deleted", nil)
 }
+
+func (ctrl *ControllerImpl) GetUsers(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), 10*time.Second)
+	defer cancel()
+
+	result, err := ctrl.svc.GetUsers(ctx)
+	if err != nil {
+		return web.ErrorResponse(c, fiber.StatusBadRequest, "No users", err.Error())
+	}
+
+	return web.SuccessResponse[[]*domain.Users](c, fiber.StatusOK, "No users", result)
+}

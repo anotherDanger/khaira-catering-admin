@@ -11,4 +11,5 @@ type Controller interface {
 	GetOrders(c *fiber.Ctx) error
 	UpdateOrder(c *fiber.Ctx) error
 	DeleteOrder(c *fiber.Ctx) error
+	GetUsers(c *fiber.Ctx) error
 }
