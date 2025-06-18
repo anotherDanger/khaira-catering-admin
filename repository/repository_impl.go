@@ -188,3 +188,25 @@ func (repo *RepositoryImpl) DeleteOrder(ctx context.Context, tx *sql.Tx, id stri
 
 	return nil
 }
+
+func (repo *RepositoryImpl) GetUsers(ctx context.Context, db *sql.DB) ([]*domain.Users, error) {
+	query := "SELECT id, username, first_name, last_name, last_accessed FROM users"
+	result, err := db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer result.Close()
+
+	var rows []*domain.Users
+	for result.Next() {
+		var row domain.Users
+		if err := result.Scan(&row.Id, &row.Username, &row.FirstName, &row.LastName, &row.LastAccessed); err != nil {
+			return nil, err
+		}
+
+		rows = append(rows, &row)
+	}
+
+	return rows, nil
+}
