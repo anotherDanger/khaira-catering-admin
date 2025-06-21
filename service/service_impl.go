@@ -158,8 +158,20 @@ func (svc *ServiceImpl) DeleteOrder(ctx context.Context, id string) error {
 func (svc *ServiceImpl) GetUsers(ctx context.Context) (data []*domain.Users, err error) {
 	result, err := svc.repo.GetUsers(ctx, svc.db)
 	if err != nil {
+		logger.GetLogger("service-log").Log("get users", "error", err.Error())
 		return nil, err
 	}
 
 	return result, nil
+}
+
+func (svc *ServiceImpl) GetUserByUsername(ctx context.Context, username string) (*domain.Users, error) {
+	result, err := svc.repo.GetUserByUsername(ctx, svc.db, username)
+	if err != nil {
+		logger.GetLogger("service-log").Log("get user by username", "error", err.Error())
+		return nil, err
+	}
+
+	return result, nil
+
 }
