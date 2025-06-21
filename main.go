@@ -31,6 +31,7 @@ func NewServer(handler controller.Controller) *fiber.App {
 	protectedRoute.Put("/v1/products/:id", handler.UpdateProduct)
 
 	protectedRoute.Get("/v1/users", handler.GetUsers)
+	protectedRoute.Get("/v1/users/:username", handler.GetUserByUsername)
 
 	return app
 }
