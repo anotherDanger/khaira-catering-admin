@@ -26,12 +26,16 @@ func (repo *RepositoryImpl) Login(ctx context.Context, db *sql.DB, entity *domai
 		return nil, err
 	}
 
+	if response.Password != entity.Password {
+		return nil, errors.New("invalid credentials")
+	}
+
 	return &response, nil
 }
 
 func (repo *RepositoryImpl) AddProduct(ctx context.Context, tx *sql.Tx, entity *domain.Domain) (*domain.Domain, error) {
-	query := "INSERT INTO products(id, name, description, stock, price, created_at) VALUES(?, ?, ?, ?, ?, ?)"
-	result, err := tx.ExecContext(ctx, query, entity.Id, entity.Name, entity.Description, entity.Stock, entity.Price, entity.CreatedAt)
+	query := "INSERT INTO products(id, name, description, stock, price, image_metadata, created_at) VALUES(?, ?, ?, ?, ?, ?, ?)"
+	result, err := tx.ExecContext(ctx, query, entity.Id, entity.Name, entity.Description, entity.Stock, entity.Price, entity.ImageMetadata, entity.CreatedAt)
 	if err != nil {
 		logger.GetLogger("repository-log").Log("add product", "error", err.Error())
 		return nil, err
