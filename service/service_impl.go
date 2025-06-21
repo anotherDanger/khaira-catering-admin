@@ -8,6 +8,7 @@ import (
 	"khaira-admin/logger"
 	"khaira-admin/repository"
 	"khaira-admin/web"
+	"mime/multipart"
 
 	"time"
 )
@@ -38,26 +39,28 @@ func (svc *ServiceImpl) Login(ctx context.Context, request *domain.Admin) (*web.
 	return response, nil
 }
 
-func (svc *ServiceImpl) AddProduct(ctx context.Context, request *web.Request) (data *domain.Domain, err error) {
-	tx, err := svc.db.Begin()
+func (svc *ServiceImpl) AddProduct(ctx context.Context, request *web.Request, file *multipart.FileHeader) (data *domain.Domain, err error) {
+	filename, err := helper.SaveFile(file, "/home/andhikadanger/Documents/khaira-catering-online/khaira-admin/uploads")
 	if err != nil {
-		logger.GetLogger("service-log").Log("add product", "error", err.Error())
 		return nil, err
 	}
 
-	date := time.Now()
+	request.ImageMetadata = filename
+	now := time.Now()
+	request.CreatedAt = &now
 
-	request.CreatedAt = &date
+	tx, err := svc.db.Begin()
+	if err != nil {
+		return nil, err
+	}
 	defer helper.WithTransaction(tx, &err)
 
 	data, err = svc.repo.AddProduct(ctx, tx, (*domain.Domain)(request))
 	if err != nil {
-		logger.GetLogger("service-log").Log("add product", "error", err.Error())
 		return nil, err
 	}
 
 	return data, nil
-
 }
 
 func (svc *ServiceImpl) GetProducts(ctx context.Context) (data []*domain.Domain, err error) {
