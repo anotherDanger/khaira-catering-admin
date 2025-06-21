@@ -175,3 +175,23 @@ func (svc *ServiceImpl) GetUserByUsername(ctx context.Context, username string) 
 	return result, nil
 
 }
+
+func (svc *ServiceImpl) GetOrdersByUsername(ctx context.Context, username string) ([]*domain.Orders, error) {
+	result, err := svc.repo.GetOrderByUsername(ctx, svc.db, username)
+	if err != nil {
+		logger.GetLogger("service-log").Log("get orders by username", "error", err.Error())
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (svc *ServiceImpl) GetOrderById(ctx context.Context, id string) (*domain.Orders, error) {
+	result, err := svc.repo.GetOrderById(ctx, svc.db, id)
+	if err != nil {
+		logger.GetLogger("service-log").Log("get order by id", "error", err.Error())
+		return nil, err
+	}
+
+	return result, nil
+}
