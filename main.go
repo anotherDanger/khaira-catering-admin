@@ -30,6 +30,8 @@ func NewServer(handler controller.Controller) *fiber.App {
 	protectedRoute.Delete("/v1/products/:id", handler.DeleteProduct)
 	protectedRoute.Put("/v1/products/:id", handler.UpdateProduct)
 
+	protectedRoute.Get("/v1/users", handler.GetUsers)
+
 	return app
 }
 
