@@ -26,9 +26,41 @@ func SaveFile(file *multipart.FileHeader, dstDir string) (string, error) {
 	}
 	defer out.Close()
 
-	if _, err := io.Copy(out, src); err != nil {
+	_, err = io.Copy(out, src)
+	if err != nil {
 		return "", err
 	}
 
 	return filename, nil
+}
+
+func MoveFile(srcPath, dstPath string) error {
+	err := os.Rename(srcPath, dstPath)
+	if err == nil {
+		return nil
+	}
+
+	in, err := os.Open(srcPath)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	out, err := os.Create(dstPath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, in)
+	if err != nil {
+		return err
+	}
+
+	err = os.Remove(srcPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
