@@ -43,18 +43,22 @@ func (h *ElasticHookImpl) Levels() []logrus.Level {
 }
 
 func (h *ElasticHookImpl) Fire(entry *logrus.Entry) error {
+	cleanData := make(logrus.Fields)
+	for k, v := range entry.Data {
+		if k != "level" {
+			cleanData[k] = v
+		}
+	}
 	doc := map[string]interface{}{
 		"timestamp": time.Now().UTC().Format(time.RFC3339),
 		"level":     entry.Level.String(),
 		"message":   entry.Message,
-		"fields":    entry.Data,
+		"fields":    cleanData,
 	}
-
 	data, err := json.Marshal(doc)
 	if err != nil {
 		return err
 	}
-
 	res, err := h.client.Index(
 		h.indexName,
 		bytes.NewReader(data),
@@ -65,11 +69,9 @@ func (h *ElasticHookImpl) Fire(entry *logrus.Entry) error {
 		return err
 	}
 	defer res.Body.Close()
-
 	if res.IsError() {
 		return fmt.Errorf("elastic hook failed with status: %s", res.Status())
 	}
-
 	return nil
 }
 
@@ -87,7 +89,6 @@ func (l *ElasticLoggerImpl) Log(entity string, level string, message string) {
 		"entity": entity,
 		"level":  level,
 	})
-
 	switch level {
 	case "debug":
 		entry.Debug(message)
@@ -105,11 +106,13 @@ func (l *ElasticLoggerImpl) Log(entity string, level string, message string) {
 }
 
 func GetLogger(index string) ElasticLogger {
+	elasticHost := os.Getenv("ELASTICHOST")
+	fmt.Println("ELASTICHOST:", elasticHost)
 	if !isLoggerInitialized {
+		elastic := fmt.Sprintf("http://%s:9200", elasticHost)
 		cfg := elasticsearch.Config{
-			Addresses: []string{"http://localhost:9200"},
+			Addresses: []string{elastic},
 		}
-
 		esClient, err := elasticsearch.NewClient(cfg)
 		if err != nil {
 			logToFile("log/elasticsearchfatal.log", fmt.Sprintf("Failed to create Elasticsearch client: %v", err))
@@ -117,7 +120,6 @@ func GetLogger(index string) ElasticLogger {
 			isLoggerInitialized = true
 			return elasticLoggerInstance
 		}
-
 		res, err := esClient.Info()
 		if err != nil {
 			logToFile("log/elasticsearchfatal.log", fmt.Sprintf("Failed to connect to Elasticsearch: %v", err))
@@ -129,18 +131,15 @@ func GetLogger(index string) ElasticLogger {
 			return elasticLoggerInstance
 		}
 		defer res.Body.Close()
-
 		if res.IsError() {
 			logToFile("log/elasticsearchfatal.log", fmt.Sprintf("Elasticsearch returned an error: %s", res.Status()))
 			elasticLoggerInstance = NewFileFallbackLogger("log/elasticsearchfatal.log")
 			isLoggerInitialized = true
 			return elasticLoggerInstance
 		}
-
 		elasticLoggerInstance = NewElasticLoggerImpl(esClient, index)
 		isLoggerInitialized = true
 	}
-
 	return elasticLoggerInstance
 }
 
@@ -155,14 +154,12 @@ func logToFile(filePath, message string) {
 			}
 		}
 	}
-
 	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
 		fmt.Printf("Failed to open log file %s: %v\n", filePath, err)
 		return
 	}
 	defer file.Close()
-
 	_, err = file.WriteString(fmt.Sprintf("%s - %s\n", time.Now().Format(time.RFC3339), message))
 	if err != nil {
 		fmt.Printf("Failed to write to log file: %v\n", err)
@@ -172,7 +169,6 @@ func logToFile(filePath, message string) {
 func NewFileFallbackLogger(filePath string) ElasticLogger {
 	log := logrus.New()
 	log.SetFormatter(&logrus.JSONFormatter{})
-
 	dir := filepath.Dir(filePath)
 	if dir != "" {
 		if _, err := os.Stat(dir); os.IsNotExist(err) {
@@ -184,7 +180,6 @@ func NewFileFallbackLogger(filePath string) ElasticLogger {
 			}
 		}
 	}
-
 	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to open fallback log file %s: %v. Logging to stdout instead.\n", filePath, err)
@@ -192,6 +187,5 @@ func NewFileFallbackLogger(filePath string) ElasticLogger {
 	} else {
 		log.SetOutput(file)
 	}
-
 	return &ElasticLoggerImpl{logger: log}
 }
