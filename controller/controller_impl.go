@@ -168,3 +168,17 @@ func (ctrl *ControllerImpl) GetUsers(c *fiber.Ctx) error {
 
 	return web.SuccessResponse[[]*domain.Users](c, fiber.StatusOK, "No users", result)
 }
+
+func (ctrl *ControllerImpl) GetUserByUsername(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), 10*time.Second)
+	defer cancel()
+
+	username := c.Params("username")
+
+	result, err := ctrl.svc.GetUserByUsername(ctx, username)
+	if err != nil {
+		return web.ErrorResponse(c, fiber.StatusBadRequest, "Cannot find by username", err.Error())
+	}
+
+	return web.SuccessResponse[*domain.Users](c, int(fiber.StatusOK), "OK", result)
+}
