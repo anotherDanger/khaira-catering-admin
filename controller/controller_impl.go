@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"khaira-admin/domain"
 	"khaira-admin/helper"
 	"khaira-admin/service"
@@ -39,29 +40,38 @@ func (ctrl *ControllerImpl) Login(c *fiber.Ctx) error {
 }
 
 func (ctrl *ControllerImpl) AddProduct(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(c.Context(), 10*time.Second)
-	defer cancel()
-
 	var reqBody web.Request
+	reqBody.Id = c.FormValue("id")
 	reqBody.Name = c.FormValue("name")
 	reqBody.Description = c.FormValue("description")
+
 	price, err := strconv.Atoi(c.FormValue("price"))
 	if err != nil {
 		return web.ErrorResponse(c, fiber.StatusBadRequest, "Price must be a valid number.", "")
 	}
 	reqBody.Price = price
+
 	stock, err := strconv.Atoi(c.FormValue("stock"))
 	if err != nil {
 		return web.ErrorResponse(c, fiber.StatusBadRequest, "Stock must be a valid number.", "")
 	}
 	reqBody.Stock = stock
+
 	if err := helper.ValidateStruct(reqBody); err != nil {
 		return web.ErrorResponse(c, fiber.StatusBadRequest, "Please complete all required product fields.", "")
 	}
-	result, err := ctrl.svc.AddProduct(ctx, &reqBody)
+
+	file, err := c.FormFile("image")
 	if err != nil {
+		return web.ErrorResponse(c, fiber.StatusBadRequest, "Image is required.", "")
+	}
+
+	result, err := ctrl.svc.AddProduct(c.Context(), &reqBody, file)
+	if err != nil {
+		fmt.Println(err)
 		return web.ErrorResponse(c, fiber.StatusInternalServerError, "Unable to add product. Please try again later.", "")
 	}
+
 	return web.SuccessResponse[*domain.Domain](c, fiber.StatusCreated, "Product successfully added.", result)
 }
 
@@ -181,4 +191,32 @@ func (ctrl *ControllerImpl) GetUserByUsername(c *fiber.Ctx) error {
 	}
 
 	return web.SuccessResponse[*domain.Users](c, int(fiber.StatusOK), "OK", result)
+}
+
+// GetOrderById(c *fiber.Ctx) error
+
+func (ctrl *ControllerImpl) GetOrdersByUsername(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), 10*time.Second)
+	defer cancel()
+
+	username := c.Params("username")
+	result, err := ctrl.svc.GetOrdersByUsername(ctx, username)
+	if err != nil {
+		return web.ErrorResponse(c, fiber.StatusBadRequest, "Cannot find order by username", err.Error())
+	}
+
+	return web.SuccessResponse[[]*domain.Orders](c, fiber.StatusOK, "OK", result)
+}
+
+func (ctrl *ControllerImpl) GetOrderById(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), 10*time.Second)
+	defer cancel()
+
+	id := c.Params("id")
+	result, err := ctrl.svc.GetOrderById(ctx, id)
+	if err != nil {
+		return web.ErrorResponse(c, fiber.StatusBadRequest, "Cannot find order by Id", err.Error())
+	}
+
+	return web.SuccessResponse[*domain.Orders](c, fiber.StatusOK, "OK", result)
 }
