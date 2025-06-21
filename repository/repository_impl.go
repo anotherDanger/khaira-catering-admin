@@ -193,6 +193,7 @@ func (repo *RepositoryImpl) GetUsers(ctx context.Context, db *sql.DB) ([]*domain
 	query := "SELECT id, username, first_name, last_name, last_accessed FROM users"
 	result, err := db.QueryContext(ctx, query)
 	if err != nil {
+		logger.GetLogger("repository-log").Log("get users", "errors", err.Error())
 		return nil, err
 	}
 
@@ -202,6 +203,7 @@ func (repo *RepositoryImpl) GetUsers(ctx context.Context, db *sql.DB) ([]*domain
 	for result.Next() {
 		var row domain.Users
 		if err := result.Scan(&row.Id, &row.Username, &row.FirstName, &row.LastName, &row.LastAccessed); err != nil {
+			logger.GetLogger("repository-log").Log("get users", "errors", err.Error())
 			return nil, err
 		}
 
@@ -209,4 +211,18 @@ func (repo *RepositoryImpl) GetUsers(ctx context.Context, db *sql.DB) ([]*domain
 	}
 
 	return rows, nil
+}
+
+func (repo *RepositoryImpl) GetUserByUsername(ctx context.Context, db *sql.DB, username string) (*domain.Users, error) {
+	query := "SELECT id, username, first_name, last_name, last_accessed FROM users where username = ?"
+	result := db.QueryRowContext(ctx, query, username)
+
+	var row domain.Users
+	if err := result.Scan(&row.Id, &row.Username, &row.FirstName, &row.LastName, &row.LastAccessed); err != nil {
+		logger.GetLogger("repository-log").Log("get users by id", "errors", err.Error())
+		return nil, err
+	}
+
+	return &row, nil
+
 }
