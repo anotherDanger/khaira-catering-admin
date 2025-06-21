@@ -15,6 +15,8 @@ type Repository interface {
 	GetOrders(ctx context.Context, db *sql.DB) ([]*domain.Orders, error)
 	UpdateOrder(ctx context.Context, tx *sql.Tx, entity *domain.Orders, id string) error
 	DeleteOrder(ctx context.Context, tx *sql.Tx, id string) error
+	GetOrderByUsername(ctx context.Context, db *sql.DB, username string) ([]*domain.Orders, error)
+	GetOrderById(ctx context.Context, db *sql.DB, id string) (*domain.Orders, error)
 	GetUsers(ctx context.Context, db *sql.DB) ([]*domain.Users, error)
 	GetUserByUsername(ctx context.Context, db *sql.DB, username string) (*domain.Users, error)
 }

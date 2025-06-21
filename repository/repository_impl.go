@@ -226,3 +226,37 @@ func (repo *RepositoryImpl) GetUserByUsername(ctx context.Context, db *sql.DB, u
 	return &row, nil
 
 }
+
+func (repo *RepositoryImpl) GetOrderByUsername(ctx context.Context, db *sql.DB, username string) ([]*domain.Orders, error) {
+	query := "SELECT id, product_id, product_name, username, quantity, total, status, created_at, modified_at FROM orders WHERE username = ?"
+	result, err := db.QueryContext(ctx, query, username)
+	if err != nil {
+		logger.GetLogger("repository-log").Log("get orders by username", "errors", err.Error())
+		return nil, err
+	}
+
+	var rows []*domain.Orders
+	for result.Next() {
+		var row domain.Orders
+		if err := result.Scan(&row.Id, &row.ProductId, &row.ProductName, &row.Username, &row.Quantity, &row.Total, &row.Status, &row.CreatedAt, &row.ModifiedAt); err != nil {
+			logger.GetLogger("repository-log").Log("get orders by username", "errors", err.Error())
+			return nil, err
+		}
+
+		rows = append(rows, &row)
+	}
+
+	return rows, nil
+}
+
+func (repo *RepositoryImpl) GetOrderById(ctx context.Context, db *sql.DB, id string) (*domain.Orders, error) {
+	query := "SELECT id, product_id, product_name, username, quantity, total, status, created_at, modified_at FROM orders WHERE id = ?"
+	result := db.QueryRowContext(ctx, query, id)
+	var order domain.Orders
+	if err := result.Scan(&order.Id, &order.ProductId, &order.ProductName, &order.Username, &order.Quantity, &order.Total, &order.Status, &order.CreatedAt, &order.ModifiedAt); err != nil {
+		logger.GetLogger("repository-log").Log("get order by id", "errors", err.Error())
+		return nil, err
+	}
+
+	return &order, nil
+}
