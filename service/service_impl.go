@@ -9,6 +9,8 @@ import (
 	"khaira-admin/repository"
 	"khaira-admin/web"
 	"mime/multipart"
+	"os"
+	"path/filepath"
 
 	"time"
 )
@@ -40,7 +42,18 @@ func (svc *ServiceImpl) Login(ctx context.Context, request *domain.Admin) (*web.
 }
 
 func (svc *ServiceImpl) AddProduct(ctx context.Context, request *web.Request, file *multipart.FileHeader) (data *domain.Domain, err error) {
-	filename, err := helper.SaveFile(file, "/home/andhikadanger/Documents/khaira-catering-online/khaira-admin/uploads")
+	tempDir := "/tmp/uploads"
+	finalDir := "/app/uploads"
+
+	filename, err := helper.SaveFile(file, tempDir)
+	if err != nil {
+		return nil, err
+	}
+
+	tempPath := filepath.Join(tempDir, filename)
+	finalPath := filepath.Join(finalDir, filename)
+
+	err = helper.MoveFile(tempPath, finalPath)
 	if err != nil {
 		return nil, err
 	}
@@ -51,12 +64,14 @@ func (svc *ServiceImpl) AddProduct(ctx context.Context, request *web.Request, fi
 
 	tx, err := svc.db.Begin()
 	if err != nil {
+		os.Remove(finalPath)
 		return nil, err
 	}
 	defer helper.WithTransaction(tx, &err)
 
 	data, err = svc.repo.AddProduct(ctx, tx, (*domain.Domain)(request))
 	if err != nil {
+		os.Remove(finalPath)
 		return nil, err
 	}
 
