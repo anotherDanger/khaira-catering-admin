@@ -14,6 +14,7 @@ import (
 )
 
 var ServerSet = wire.NewSet(
+	helper.NewElasticClient,
 	repository.NewRepositoryImpl,
 	service.NewServiceImpl,
 	controller.NewControllerImpl,
