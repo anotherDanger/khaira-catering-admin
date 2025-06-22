@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"khaira-admin/domain"
+	"khaira-admin/helper"
 	"testing"
 	"time"
 
@@ -113,6 +114,10 @@ func TestGetProducts(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			elastic, err := helper.NewElasticClient()
+			if err != nil {
+				t.Fatal(err)
+			}
 			db, mock, err := sqlmock.New()
 			if err != nil {
 				t.Fatal(err)
@@ -120,7 +125,7 @@ func TestGetProducts(t *testing.T) {
 
 			tt.setupMock(mock)
 
-			repo := NewRepositoryImpl()
+			repo := NewRepositoryImpl(elastic)
 
 			result, err := repo.GetProducts(context.Background(), db)
 
@@ -215,6 +220,10 @@ func TestAddProduct(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			elastic, err := helper.NewElasticClient()
+			if err != nil {
+				t.Fatal(err)
+			}
 			db, mock, err := sqlmock.New()
 			assert.NoError(t, err)
 
@@ -227,7 +236,7 @@ func TestAddProduct(t *testing.T) {
 			}
 			assert.NoError(t, err)
 
-			repo := NewRepositoryImpl()
+			repo := NewRepositoryImpl(elastic)
 			result, err := repo.AddProduct(context.Background(), tx, tt.expectedResult)
 
 			if tt.expectedErr {
@@ -404,6 +413,10 @@ func TestUpdateProduct(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			elastic, err := helper.NewElasticClient()
+			if err != nil {
+				t.Fatal(err)
+			}
 			db, mock, err := sqlmock.New()
 			assert.NoError(t, err)
 
@@ -416,7 +429,7 @@ func TestUpdateProduct(t *testing.T) {
 			}
 			assert.NoError(t, err)
 
-			repo := NewRepositoryImpl()
+			repo := NewRepositoryImpl(elastic)
 
 			result, err := repo.UpdateProduct(context.Background(), tx, tt.inputEntity, id)
 
@@ -502,13 +515,17 @@ func TestGetOrders(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			elastic, err := helper.NewElasticClient()
+			if err != nil {
+				t.Fatal(err)
+			}
 			db, mock, err := sqlmock.New()
 			assert.NoError(t, err)
 			defer db.Close()
 
 			tt.setupMock(mock)
 
-			repo := NewRepositoryImpl()
+			repo := NewRepositoryImpl(elastic)
 			result, err := repo.GetOrders(context.Background(), db)
 
 			if tt.expectedErr {
@@ -580,6 +597,10 @@ func TestUpdateOrder(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			elastic, err := helper.NewElasticClient()
+			if err != nil {
+				t.Fatal(err)
+			}
 			db, mock, err := sqlmock.New()
 			assert.NoError(t, err)
 			defer db.Close()
@@ -593,7 +614,7 @@ func TestUpdateOrder(t *testing.T) {
 			}
 			assert.NoError(t, err)
 
-			repo := NewRepositoryImpl()
+			repo := NewRepositoryImpl(elastic)
 			order := &domain.Orders{
 				Id:     id,
 				Status: status,
@@ -631,12 +652,16 @@ func TestDeleteOrder(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			elastic, err := helper.NewElasticClient()
+			if err != nil {
+				t.Fatal(err)
+			}
 			db, sqlmock, err := sqlmock.New()
 			if err != nil {
 				t.Fatal(err)
 				return
 			}
-			repo := NewRepositoryImpl()
+			repo := NewRepositoryImpl(elastic)
 			tt.setupMock(sqlmock)
 			tx, err := db.Begin()
 			if err != nil {
