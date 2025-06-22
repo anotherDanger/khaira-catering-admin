@@ -18,7 +18,11 @@ import (
 // Injectors from injector.go:
 
 func InitServer() (*fiber.App, func(), error) {
-	repositoryRepository := repository.NewRepositoryImpl()
+	client, err := helper.NewElasticClient()
+	if err != nil {
+		return nil, nil, err
+	}
+	repositoryRepository := repository.NewRepositoryImpl(client)
 	db, cleanup, err := helper.NewDb()
 	if err != nil {
 		return nil, nil, err
@@ -33,4 +37,4 @@ func InitServer() (*fiber.App, func(), error) {
 
 // injector.go:
 
-var ServerSet = wire.NewSet(repository.NewRepositoryImpl, service.NewServiceImpl, controller.NewControllerImpl, helper.NewDb, NewServer)
+var ServerSet = wire.NewSet(helper.NewElasticClient, repository.NewRepositoryImpl, service.NewServiceImpl, controller.NewControllerImpl, helper.NewDb, NewServer)
