@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"khaira-admin/helper"
 	"os"
 	"path/filepath"
 	"time"
@@ -53,7 +54,9 @@ func (h *ElasticHookImpl) Fire(entry *logrus.Entry) error {
 		"timestamp": time.Now().UTC().Format(time.RFC3339),
 		"level":     entry.Level.String(),
 		"message":   entry.Message,
-		"fields":    cleanData,
+	}
+	for k, v := range cleanData {
+		doc[k] = v
 	}
 	data, err := json.Marshal(doc)
 	if err != nil {
@@ -106,38 +109,14 @@ func (l *ElasticLoggerImpl) Log(entity string, level string, message string) {
 }
 
 func GetLogger(index string) ElasticLogger {
-	elasticHost := os.Getenv("ELASTICHOST")
-	fmt.Println("ELASTICHOST:", elasticHost)
 	if !isLoggerInitialized {
-		elastic := fmt.Sprintf("http://%s:9200", elasticHost)
-		cfg := elasticsearch.Config{
-			Addresses: []string{elastic},
-		}
-		esClient, err := elasticsearch.NewClient(cfg)
-		if err != nil {
-			logToFile("log/elasticsearchfatal.log", fmt.Sprintf("Failed to create Elasticsearch client: %v", err))
-			elasticLoggerInstance = NewFileFallbackLogger("log/elasticsearchfatal.log")
-			isLoggerInitialized = true
-			return elasticLoggerInstance
-		}
-		res, err := esClient.Info()
+		esClient, err := helper.NewElasticClient()
 		if err != nil {
 			logToFile("log/elasticsearchfatal.log", fmt.Sprintf("Failed to connect to Elasticsearch: %v", err))
 			elasticLoggerInstance = NewFileFallbackLogger("log/elasticsearchfatal.log")
-			isLoggerInitialized = true
-			if res != nil {
-				res.Body.Close()
-			}
-			return elasticLoggerInstance
+		} else {
+			elasticLoggerInstance = NewElasticLoggerImpl(esClient, index)
 		}
-		defer res.Body.Close()
-		if res.IsError() {
-			logToFile("log/elasticsearchfatal.log", fmt.Sprintf("Elasticsearch returned an error: %s", res.Status()))
-			elasticLoggerInstance = NewFileFallbackLogger("log/elasticsearchfatal.log")
-			isLoggerInitialized = true
-			return elasticLoggerInstance
-		}
-		elasticLoggerInstance = NewElasticLoggerImpl(esClient, index)
 		isLoggerInitialized = true
 	}
 	return elasticLoggerInstance
