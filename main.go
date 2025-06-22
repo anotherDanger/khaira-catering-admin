@@ -17,8 +17,10 @@ func NewServer(handler controller.Controller) *fiber.App {
 		AllowMethods:     "GET, POST, PUT, DELETE",
 	}))
 
+	app.Static("/images", "/app/uploads")
+
 	app.Post("/v1/login", handler.Login)
-	app.Get("/v1/users", handler.GetUsers)
+	app.Post("/v1/logs", handler.GetLog)
 	protectedRoute := app.Group("/api")
 	protectedRoute.Use(middleware.MyMiddleware)
 	protectedRoute.Get("/v1/orders", handler.GetOrders)
@@ -34,6 +36,8 @@ func NewServer(handler controller.Controller) *fiber.App {
 
 	protectedRoute.Get("/v1/users", handler.GetUsers)
 	protectedRoute.Get("/v1/users/:username", handler.GetUserByUsername)
+
+	protectedRoute.Get("/v1/logs", handler.GetLog)
 
 	return app
 }
