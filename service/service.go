@@ -20,4 +20,5 @@ type Service interface {
 	GetUserByUsername(ctx context.Context, username string) (*domain.Users, error)
 	GetOrdersByUsername(ctx context.Context, username string) ([]*domain.Orders, error)
 	GetOrderById(ctx context.Context, id string) (*domain.Orders, error)
+	GetLog(ctx context.Context) ([]*domain.Hit, error)
 }

@@ -213,3 +213,15 @@ func (ctrl *ControllerImpl) GetOrderById(c *fiber.Ctx) error {
 	}
 	return web.SuccessResponse[*domain.Orders](c, fiber.StatusOK, "Order found", result)
 }
+
+func (ctrl *ControllerImpl) GetLog(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), 10*time.Second)
+	defer cancel()
+
+	result, err := ctrl.svc.GetLog(ctx)
+	if err != nil {
+		return web.ErrorResponse(c, fiber.StatusBadGateway, "Bad Gateway", "Client error")
+	}
+
+	return web.SuccessResponse[[]*domain.Hit](c, fiber.StatusOK, "OK", result)
+}

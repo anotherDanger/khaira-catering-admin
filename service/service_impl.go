@@ -186,3 +186,13 @@ func (svc *ServiceImpl) GetOrderById(ctx context.Context, id string) (*domain.Or
 	}
 	return result, nil
 }
+
+func (svc *ServiceImpl) GetLog(ctx context.Context) ([]*domain.Hit, error) {
+	result, err := svc.repo.GetLog(ctx)
+	if err != nil {
+		logger.GetLogger("service-log").Log("get order by id", "error", err.Error())
+		return nil, err
+	}
+
+	return result, nil
+}

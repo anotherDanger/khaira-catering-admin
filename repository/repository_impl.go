@@ -3,19 +3,28 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"khaira-admin/domain"
 	"khaira-admin/logger"
+	"strings"
+
+	"github.com/elastic/go-elasticsearch/v9"
 )
 
-type RepositoryImpl struct{}
+type RepositoryImpl struct {
+	elastic *elasticsearch.Client
+}
 
-func NewRepositoryImpl() Repository {
-	return &RepositoryImpl{}
+func NewRepositoryImpl(elastic *elasticsearch.Client) Repository {
+	return &RepositoryImpl{
+		elastic: elastic,
+	}
 }
 
 func (repo *RepositoryImpl) Login(ctx context.Context, db *sql.DB, entity *domain.Admin) (*domain.Admin, error) {
-	query := "SELECT id, username, password FROM awdawdawd WHERE username = ?"
+	query := "SELECT id, username, password FROM admin WHERE username = ?"
 	row := db.QueryRowContext(ctx, query, entity.Username)
 	var response domain.Admin
 	err := row.Scan(&response.Id, &response.Username, &response.Password)
@@ -223,4 +232,36 @@ func (repo *RepositoryImpl) GetOrderById(ctx context.Context, db *sql.DB, id str
 		return nil, err
 	}
 	return &order, nil
+}
+
+func (repo *RepositoryImpl) GetLog(ctx context.Context) ([]*domain.Hit, error) {
+
+	query := `{"query": {"match_all": {}}}`
+
+	res, err := repo.elastic.Search(
+		repo.elastic.Search.WithContext(ctx),
+		repo.elastic.Search.WithIndex("repository-log"),
+		repo.elastic.Search.WithBody(strings.NewReader(query)),
+		repo.elastic.Search.WithTrackTotalHits(true),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return nil, fmt.Errorf("Elasticsearch error: %s", res.String())
+	}
+
+	var searchResp domain.SearchResponse
+	if err := json.NewDecoder(res.Body).Decode(&searchResp); err != nil {
+		return nil, err
+	}
+
+	var hits []*domain.Hit
+	for i := range searchResp.Hits.Hits {
+		hits = append(hits, &searchResp.Hits.Hits[i])
+	}
+
+	return hits, nil
 }
