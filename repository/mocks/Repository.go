@@ -82,6 +82,96 @@ func (_m *Repository) DeleteProduct(ctx context.Context, tx *sql.Tx, id string) 
 	return r0
 }
 
+// GetLog provides a mock function with given fields: ctx
+func (_m *Repository) GetLog(ctx context.Context) ([]*domain.Hit, error) {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetLog")
+	}
+
+	var r0 []*domain.Hit
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) ([]*domain.Hit, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) []*domain.Hit); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.Hit)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetOrderById provides a mock function with given fields: ctx, db, id
+func (_m *Repository) GetOrderById(ctx context.Context, db *sql.DB, id string) (*domain.Orders, error) {
+	ret := _m.Called(ctx, db, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetOrderById")
+	}
+
+	var r0 *domain.Orders
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *sql.DB, string) (*domain.Orders, error)); ok {
+		return rf(ctx, db, id)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *sql.DB, string) *domain.Orders); ok {
+		r0 = rf(ctx, db, id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Orders)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *sql.DB, string) error); ok {
+		r1 = rf(ctx, db, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetOrderByUsername provides a mock function with given fields: ctx, db, username
+func (_m *Repository) GetOrderByUsername(ctx context.Context, db *sql.DB, username string) ([]*domain.Orders, error) {
+	ret := _m.Called(ctx, db, username)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetOrderByUsername")
+	}
+
+	var r0 []*domain.Orders
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *sql.DB, string) ([]*domain.Orders, error)); ok {
+		return rf(ctx, db, username)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *sql.DB, string) []*domain.Orders); ok {
+		r0 = rf(ctx, db, username)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.Orders)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *sql.DB, string) error); ok {
+		r1 = rf(ctx, db, username)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetOrders provides a mock function with given fields: ctx, db
 func (_m *Repository) GetOrders(ctx context.Context, db *sql.DB) ([]*domain.Orders, error) {
 	ret := _m.Called(ctx, db)
@@ -130,6 +220,66 @@ func (_m *Repository) GetProducts(ctx context.Context, db *sql.DB) ([]*domain.Do
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.Domain)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *sql.DB) error); ok {
+		r1 = rf(ctx, db)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetUserByUsername provides a mock function with given fields: ctx, db, username
+func (_m *Repository) GetUserByUsername(ctx context.Context, db *sql.DB, username string) (*domain.Users, error) {
+	ret := _m.Called(ctx, db, username)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetUserByUsername")
+	}
+
+	var r0 *domain.Users
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *sql.DB, string) (*domain.Users, error)); ok {
+		return rf(ctx, db, username)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *sql.DB, string) *domain.Users); ok {
+		r0 = rf(ctx, db, username)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Users)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *sql.DB, string) error); ok {
+		r1 = rf(ctx, db, username)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetUsers provides a mock function with given fields: ctx, db
+func (_m *Repository) GetUsers(ctx context.Context, db *sql.DB) ([]*domain.Users, error) {
+	ret := _m.Called(ctx, db)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetUsers")
+	}
+
+	var r0 []*domain.Users
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *sql.DB) ([]*domain.Users, error)); ok {
+		return rf(ctx, db)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *sql.DB) []*domain.Users); ok {
+		r0 = rf(ctx, db)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.Users)
 		}
 	}
 
