@@ -39,10 +39,6 @@ pipeline {
                 sh 'docker compose up -d'
             }
         }
-        stage('Stop Services'){
-            steps {
-                sh 'docker compose down'
-            }
-        }
+
     }
 }
