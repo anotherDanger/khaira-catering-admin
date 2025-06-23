@@ -3,6 +3,7 @@ package helper
 import (
 	"database/sql"
 	"fmt"
+	migrate "khaira-admin/db"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -22,7 +23,7 @@ func NewDb() (*sql.DB, func(), error) {
 	name := os.Getenv("DB_NAME")
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, pass, host, port, name)
-
+	migrate.RunMigrations(dsn)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		panic(err)
