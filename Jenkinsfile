@@ -6,6 +6,11 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Compose Down'){
+            steps{
+                sh 'docker compose down'
+            }
+        }
         stage('Use Credentials'){
             steps{
                 withCredentials([
