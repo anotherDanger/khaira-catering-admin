@@ -6,8 +6,6 @@ services:
     container_name: fiber-app
     env_file:
       - .env
-    ports:
-      - 8082:8082
     networks:
       - admin-networks
     volumes:
@@ -23,6 +21,12 @@ services:
         limits:
           cpus: '1.0'
           memory: 1G
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fiber-app.rule=PathPrefix(`/app`)"
+      - "traefik.http.routers.fiber-app.entrypoints=websecure"
+      - "traefik.http.routers.fiber-app.tls.certresolver=myresolver"
+
 
   admin-data:
     image: mysql:latest
