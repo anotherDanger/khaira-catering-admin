@@ -45,8 +45,8 @@ CREATE INDEX idx_users_username ON users(username);
 INSERT INTO products (id, name, description, price, stock) VALUES
 ('PRD001', 'Produk A', 'Deskripsi produk A', 100000, 50);
 
-INSERT INTO users (id, username, password) VALUES
-('f1e2d3c4-b5a6-7890-abcd-ef9876543210', 'user1', 'John' , 'Marston' ,'123');
+INSERT INTO users (id, username, first_name, last_name, password) VALUES
+('f1e2d3c4-b5a6-7890-abcd-ef9876543210', 'user1', 'John', 'Marston', '123');
 
 INSERT INTO admin (id, username, password) VALUES
 ('e7b8a9d4-3f5a-4c82-b7e2-2c3f49b0e9c1', 'admin', 'hashed_admin_password');
