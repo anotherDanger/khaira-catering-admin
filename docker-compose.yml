@@ -7,7 +7,6 @@ services:
     env_file:
       - .env
     networks:
-      - admin-networks
       - web
     volumes:
       - product-image:/app/uploads
@@ -32,27 +31,8 @@ services:
       - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=Content-Type,Authorization"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
 
-  jwt-auth:
-    container_name: jwt-auth
-    image: ghcr.io/anotherdanger/khaira-jwt-auth:latest
-    env_file:
-      - .env
-    networks:
-      - admin-networks
-      - web
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.jwt-auth.rule=PathPrefix(`/auth`)"
-      - "traefik.http.routers.jwt-auth.entrypoints=web"
-      - "traefik.http.routers.jwt-auth.middlewares=cors"
-      - "traefik.http.middlewares.cors.headers.accesscontrolalloworigin=http://localhost:3000"
-      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
-      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=Content-Type,Authorization"
-      - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
-
   admin-data:
     image: mysql:latest
-    restart: always
     container_name: admin-data
     environment:
       MYSQL_DATABASE: catering
@@ -67,6 +47,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: always
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
@@ -93,6 +74,25 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: always
+
+  jwt-auth:
+    image: ghcr.io/anotherdanger/khaira-jwt-auth:latest
+    container_name: jwt-auth
+    env_file:
+      - .env
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jwt-auth.rule=PathPrefix(`/auth`)"
+      - "traefik.http.routers.jwt-auth.entrypoints=web"
+      - "traefik.http.routers.jwt-auth.middlewares=cors"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworigin=http://localhost:3000"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=Content-Type,Authorization"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
+    restart: on-failure
 
 networks:
   admin-networks:
