@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   fiber-app:
-    image: fiber-app
+    image: ghcr.io/anotherdanger/khaira-admin:latest
     container_name: fiber-app
     env_file:
       - .env
@@ -70,7 +70,7 @@ services:
 
   jwt-auth:
     container_name: jwt-auth
-    image: jwt-auth
+    image: ghcr.io/anotherdanger/khaira-jwt-auth:latest
     env_file:
       - .env
     ports:
