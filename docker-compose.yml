@@ -76,10 +76,14 @@ services:
     image: ghcr.io/anotherdanger/khaira-jwt-auth:latest
     env_file:
       - .env
-    ports:
-     - 8081:8081
     networks:
       - admin-networks
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jwt-auth.rule=PathPrefix(`/auth`)"
+      - "traefik.http.routers.jwt-auth.entrypoints=web"
+
 
 networks:
   admin-networks:
