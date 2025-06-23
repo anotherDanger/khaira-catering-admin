@@ -17,6 +17,10 @@ func NewServer(handler controller.Controller) *fiber.App {
 		AllowMethods:     "GET, POST, PUT, DELETE",
 	}))
 
+	app.Options("/*", func(c *fiber.Ctx) error {
+		return c.SendStatus(fiber.StatusOK)
+	})
+
 	app.Static("/images", "/app/uploads")
 
 	app.Post("/v1/login", handler.Login)
@@ -49,5 +53,5 @@ func main() {
 
 	defer cleanup()
 
-	app.Listen(":8080")
+	app.Listen(":8082")
 }
