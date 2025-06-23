@@ -22,8 +22,9 @@ func NewDb() (*sql.DB, func(), error) {
 	port := os.Getenv("DB_PORT")
 	name := os.Getenv("DB_NAME")
 
+	dsnMigrate := fmt.Sprintf("mysql://%s:%s@tcp(%s:%s)/%s", user, pass, host, port, name)
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, pass, host, port, name)
-	migrate.RunMigrations(dsn)
+	migrate.RunMigrations(dsnMigrate)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		panic(err)
