@@ -8,6 +8,7 @@ services:
       - .env
     networks:
       - admin-networks
+      - web
     volumes:
       - product-image:/app/uploads
     depends_on:
@@ -24,9 +25,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.fiber-app.rule=PathPrefix(`/app`)"
-      - "traefik.http.routers.fiber-app.entrypoints=websecure"
-      - "traefik.http.routers.fiber-app.tls.certresolver=myresolver"
-
+      - "traefik.http.routers.fiber-app.entrypoints=web"
 
   admin-data:
     image: mysql:latest
@@ -82,10 +81,10 @@ services:
     networks:
       - admin-networks
 
-  
-
 networks:
   admin-networks:
+  web:
+    external: true
 
 volumes:
   admin-data:
