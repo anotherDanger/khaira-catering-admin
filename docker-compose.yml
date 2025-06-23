@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   fiber-app:
-    image: ghcr.io/anotherdanger/khaira-admin:latest
+    image: ghcr.io/anotherdanger/khaira-admin:1.0
     container_name: fiber-app
     env_file:
       - .env
