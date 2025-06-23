@@ -6,7 +6,6 @@ pipeline {
                 checkout scm
             }
         }
-
         stage('Use Credentials'){
             steps{
                 withCredentials([
@@ -17,30 +16,29 @@ pipeline {
                     string(credentialsId: 'DB_NAME', variable: 'DB_NAME'),
                     string(credentialsId: 'ELASTICHOST', variable: 'ELASTICHOST'),
                     string(credentialsId: 'JWT_SECRET', variable: 'JWT_SECRET'),
+                    string(credentialsId: 'GHCR_TOKEN', variable: 'GHCR_TOKEN')
                 ]) {
                     script {
+                        sh 'echo $GHCR_TOKEN | docker login ghcr.io -u anotherDanger --password-stdin'
+                        
                         writeFile file: '.env', text: """
-                        DB_USER=${env.DB_USER}
-                        DB_PASS=${env.DB_PASS}
-                        DB_PORT=${env.DB_PORT}
-                        DB_HOST=${env.DB_HOST}
-                        DB_NAME=${env.DB_NAME}
-                        ELASTICHOST=${env.ELASTICHOST}
-                        JWT_SECRET=${env.JWT_SECRET}
+                        DB_USER=${DB_USER}
+                        DB_PASS=${DB_PASS}
+                        DB_PORT=${DB_PORT}
+                        DB_HOST=${DB_HOST}
+                        DB_NAME=${DB_NAME}
+                        ELASTICHOST=${ELASTICHOST}
+                        JWT_SECRET=${JWT_SECRET}
                         """
                     }
                 }
             }
         }
-
         stage('Start Services'){
             steps {
-                script{
-                    sh 'docker compose up -d'
-                }
+                sh 'docker compose up -d'
             }
         }
-
         stage('Stop Services'){
             steps {
                 sh 'docker compose down'
