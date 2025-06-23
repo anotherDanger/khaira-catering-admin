@@ -78,23 +78,7 @@ services:
     networks:
       - admin-networks
 
-  migrate:
-    image: migrate/migrate
-    container_name: migrate
-    env_file:
-      - .env
-    volumes:
-      - /home/andhikadanger/Documents/khaira-catering-online/khaira-admin/db/migrations:/migrations
-    command: [
-      "-path", "/migrations",
-      "-database", "mysql://root:${DB_PASS}@tcp(admin-data:${DB_PORT})/${DB_NAME}",
-      "up"
-    ]
-    depends_on:
-      admin-data:
-        condition: service_healthy
-    networks:
-      - admin-networks
+  
 
 networks:
   admin-networks:
