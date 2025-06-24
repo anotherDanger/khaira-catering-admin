@@ -45,14 +45,6 @@ services:
       timeout: 5s
       retries: 5
     restart: always
-  
-  admin-dashboard:
-    image: ghcr.io/anotherdanger/khaira-admin-dashboard:latest
-    container_name: admin-dashboard
-    networks:
-      - web
-    ports:
-      - 3000:3000
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
