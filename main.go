@@ -10,6 +10,7 @@ import (
 
 func NewServer(handler controller.Controller) *fiber.App {
 	app := fiber.New()
+
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "http://localhost:3000",
 		AllowCredentials: true,
@@ -24,12 +25,13 @@ func NewServer(handler controller.Controller) *fiber.App {
 	app.Static("/images", "/app/uploads")
 
 	app.Post("/v1/login", handler.Login)
+
 	protectedRoute := app.Group("/api")
 	protectedRoute.Use(middleware.MyMiddleware)
 	protectedRoute.Get("/v1/orders", handler.GetOrders)
 	protectedRoute.Put("/v1/orders/:id", handler.UpdateOrder)
 	protectedRoute.Delete("/v1/orders/:id", handler.DeleteOrder)
-	protectedRoute.Get("v1/orders/user/:username", handler.GetOrdersByUsername)
+	protectedRoute.Get("/v1/orders/user/:username", handler.GetOrdersByUsername)
 	protectedRoute.Get("/v1/orders/:id", handler.GetOrderById)
 
 	protectedRoute.Post("/v1/products", handler.AddProduct)
@@ -50,7 +52,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
 	defer cleanup()
 
 	app.Listen(":8082")
