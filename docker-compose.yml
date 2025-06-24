@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   fiber-app:
-    image: ghcr.io/anotherdanger/khaira-admin:1.3
+    image: ghcr.io/anotherdanger/khaira-admin:1.4
     container_name: fiber-app
     env_file:
       - .env
@@ -20,7 +20,7 @@ services:
     restart: on-failure
 
   jwt-auth:
-    image: ghcr.io/anotherdanger/khaira-jwt-auth:1.5
+    image: ghcr.io/anotherdanger/khaira-jwt-auth:1.6
     container_name: jwt-auth
     env_file:
       - .env
