@@ -20,7 +20,7 @@ services:
     restart: on-failure
 
   jwt-auth:
-    image: ghcr.io/anotherdanger/khaira-jwt-auth:1.0
+    image: ghcr.io/anotherdanger/jwt-auth:1.0
     container_name: jwt-auth
     env_file:
       - .env
