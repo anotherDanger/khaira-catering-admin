@@ -9,7 +9,10 @@ import (
 )
 
 func NewServer(handler controller.Controller) *fiber.App {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+
+		ProxyHeader: "X-Forwarded-Proto",
+	})
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "https://khatering.shop, http://localhost:3000",
