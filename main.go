@@ -12,9 +12,9 @@ func NewServer(handler controller.Controller) *fiber.App {
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:3000",
+		AllowOrigins:     "https://khatering.shop, http://localhost:3000",
 		AllowCredentials: true,
-		AllowHeaders:     "Origin, Content-type, Accept, Authorization",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowMethods:     "GET, POST, PUT, DELETE",
 	}))
 
