@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   fiber-app:
     image: ghcr.io/anotherdanger/khaira-admin:1.3
     container_name: fiber-app
@@ -17,22 +18,15 @@ services:
       elasticsearch:
         condition: service_healthy
     restart: on-failure
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 1G
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.fiber-app.rule=PathPrefix(`/app`)"
-      - "traefik.http.routers.fiber-app.entrypoints=web"
-      - "traefik.http.routers.fiber-app.middlewares=strip-app,cors"
-      - "traefik.http.middlewares.strip-app.stripprefix.prefixes=/app"
-      - "traefik.http.services.fiber-app.loadbalancer.server.port=8082"
-      - "traefik.http.middlewares.cors.headers.accesscontrolalloworigin=http://localhost:3000"
-      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
-      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=Content-Type,Authorization"
-      - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
+
+  jwt-auth:
+    image: ghcr.io/anotherdanger/khaira-jwt-auth:latest
+    container_name: jwt-auth
+    env_file:
+      - .env
+    networks:
+      - web
+    restart: on-failure
 
   admin-data:
     image: mysql:latest
@@ -58,7 +52,6 @@ services:
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=false
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
       - xpack.security.enabled=false
       - xpack.security.transport.ssl.enabled=false
     ulimits:
@@ -78,26 +71,6 @@ services:
       timeout: 5s
       retries: 5
     restart: always
-
-  jwt-auth:
-    image: ghcr.io/anotherdanger/khaira-jwt-auth:latest
-    container_name: jwt-auth
-    env_file:
-      - .env
-    networks:
-      - web
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.jwt-auth.rule=PathPrefix(`/auth`)"
-      - "traefik.http.routers.jwt-auth.entrypoints=web"
-      - "traefik.http.routers.jwt-auth.middlewares=strip-auth,cors"
-      - "traefik.http.middlewares.strip-auth.stripprefix.prefixes=/auth"
-      - "traefik.http.services.jwt-auth.loadbalancer.server.port=8081"
-      - "traefik.http.middlewares.cors.headers.accesscontrolalloworigin=http://localhost:3000"
-      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
-      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=Content-Type,Authorization"
-      - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
-    restart: on-failure
 
 networks:
   admin-networks:
