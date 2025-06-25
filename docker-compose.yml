@@ -43,7 +43,7 @@ services:
       - admin-data:/var/lib/mysql
     networks:
       - admin-networks
-    mem_limit: 256m
+    mem_limit: 512m
     cpus: 0.5
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASS}"]
