@@ -1,4 +1,4 @@
-version: '3.8'
+version: '2.4'
 
 services:
 
@@ -17,6 +17,8 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
+    mem_limit: 256m
+    cpus: 0.5
     restart: on-failure
 
   jwt-auth:
@@ -26,6 +28,8 @@ services:
       - .env
     networks:
       - web
+    mem_limit: 256m
+    cpus: 0.5
     restart: on-failure
 
   admin-data:
@@ -39,6 +43,8 @@ services:
       - admin-data:/var/lib/mysql
     networks:
       - admin-networks
+    mem_limit: 256m
+    cpus: 0.5
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASS}"]
       interval: 10s
@@ -65,6 +71,8 @@ services:
       - esdata:/usr/share/elasticsearch/data
     networks:
       - admin-networks
+    mem_limit: 256m
+    cpus: 0.5
     healthcheck:
       test: curl --silent --fail http://localhost:9200/_cluster/health || exit 1
       interval: 10s
