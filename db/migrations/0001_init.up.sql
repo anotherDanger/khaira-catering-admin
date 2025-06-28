@@ -32,7 +32,7 @@ CREATE TABLE orders (
     phone CHAR(12) NOT NULL,
     alamat VARCHAR(255) NOT NULL,
     kecamatan VARCHAR(100) NOT NULL,
-    desa VARCHAR(100) NO NULL,
+    desa VARCHAR(100) NOT NULL,
     username VARCHAR(100) NOT NULL,
     quantity INT NOT NULL,
     total DOUBLE NOT NULL,
