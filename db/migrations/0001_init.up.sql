@@ -28,6 +28,11 @@ CREATE TABLE orders (
     id CHAR(36) PRIMARY KEY,
     product_id VARCHAR(6) NOT NULL,
     product_name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    phone CHAR(12) NOT NULL,
+    alamat VARCHAR(255) NOT NULL,
+    kecamatan VARCHAR(100) NOT NULL,
+    desa VARCHAR(100) NO NULL,
     username VARCHAR(100) NOT NULL,
     quantity INT NOT NULL,
     total DOUBLE NOT NULL,
@@ -51,5 +56,3 @@ INSERT INTO users (id, username, first_name, last_name, password) VALUES
 INSERT INTO admin (id, username, password) VALUES
 ('e7b8a9d4-3f5a-4c82-b7e2-2c3f49b0e9c1', 'admin', 'hashed_admin_password');
 
-INSERT INTO orders (id, product_id, product_name, username, quantity, total, status) VALUES
-('11c4a458-75c1-4a34-a1e6-23b9d2d2e14e', 'PRD001', 'Produk A', 'user1', 2, 200000, 'pending');
