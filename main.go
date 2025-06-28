@@ -15,7 +15,7 @@ func NewServer(handler controller.Controller) *fiber.App {
 	})
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "https://khatering.shop, http://localhost:3000",
+		AllowOrigins:     "https://catering-admin.netlify.app",
 		AllowCredentials: true,
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowMethods:     "GET, POST, PUT, DELETE",
