@@ -18,7 +18,7 @@ func NewServer(handler controller.Controller) *fiber.App {
 		AllowOrigins:     "https://catering-admin.netlify.app",
 		AllowCredentials: true,
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
-		AllowMethods:     "GET, POST, PUT, DELETE",
+		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",
 	}))
 
 	app.Static("/images", "/app/uploads")
