@@ -17,6 +17,11 @@ type Orders struct {
 	Id          string     `json:"id"`
 	ProductId   string     `json:"product_id"`
 	ProductName string     `json:"product_name"`
+	Name        string     `json:"name"`
+	Phone       string     `json:"phone"`
+	Alamat      string     `json:"alamat"`
+	Kecamatan   string     `json:"kecamatan"`
+	Desa        string     `json:"desa"`
 	Username    string     `json:"username"`
 	Quantity    int        `json:"quantity"`
 	Total       float64    `json:"total" validate:"required"`
