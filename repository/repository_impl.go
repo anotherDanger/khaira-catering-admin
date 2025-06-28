@@ -122,7 +122,7 @@ func (repo *RepositoryImpl) UpdateProduct(ctx context.Context, tx *sql.Tx, entit
 }
 
 func (repo *RepositoryImpl) GetOrders(ctx context.Context, db *sql.DB) ([]*domain.Orders, error) {
-	query := "SELECT id, product_id, product_name, username, quantity, total, status, created_at, modified_at FROM orders"
+	query := "SELECT id, product_id, product_name, username, name, phone, alamat, kecamatan, desa ,quantity, total, status, created_at, modified_at FROM orders"
 	rows, err := db.QueryContext(ctx, query)
 	if err != nil {
 		logger.GetLogger("repository-log").Log("get orders", "error", err.Error())
@@ -132,7 +132,10 @@ func (repo *RepositoryImpl) GetOrders(ctx context.Context, db *sql.DB) ([]*domai
 	var orders []*domain.Orders
 	for rows.Next() {
 		var order domain.Orders
-		err := rows.Scan(&order.Id, &order.ProductId, &order.ProductName, &order.Username, &order.Quantity, &order.Total, &order.Status, &order.CreatedAt, &order.ModifiedAt)
+		err := rows.Scan(&order.Id, &order.ProductId, &order.ProductName,
+			&order.Username, &order.Name, &order.Phone,
+			&order.Alamat, &order.Kecamatan, &order.Desa, &order.Quantity,
+			&order.Total, &order.Status, &order.CreatedAt, &order.ModifiedAt)
 		if err != nil {
 			logger.GetLogger("repository-log").Log("get orders", "error", err.Error())
 			return nil, err
