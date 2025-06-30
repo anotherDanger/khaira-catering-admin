@@ -21,8 +21,27 @@ services:
     cpus: 0.5
     restart: on-failure
 
+  khaira-user:
+    image: ghcr.io/anotherdanger/khaira-user:dev
+    container_name: khaira-user
+    env_file:
+      - .env
+    networks:
+      - web
+      - admin-networks
+    volumes:
+      - product-image:app/uploads
+    depends_on:
+      - admin-data:
+          condition: service_healthy
+      - elasticsearch:
+        condition: service_healthy
+    mem_limit: 256m
+    cpus: 0.5
+    restart: on-failure
+
   jwt-auth:
-    image: ghcr.io/anotherdanger/khaira-jwt-auth:2.0
+    image: ghcr.io/anotherdanger/khaira-jwt-auth:2.1
     container_name: jwt-auth
     env_file:
       - .env
