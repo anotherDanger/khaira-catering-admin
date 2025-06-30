@@ -35,7 +35,7 @@ services:
       - admin-data:
           condition: service_healthy
       - elasticsearch:
-        condition: service_healthy
+          condition: service_healthy
     mem_limit: 256m
     cpus: 0.5
     restart: on-failure
