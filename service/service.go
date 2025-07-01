@@ -19,6 +19,7 @@ type Service interface {
 	DeleteOrder(ctx context.Context, id string) error
 	GetUsers(ctx context.Context) ([]*domain.Users, error)
 	GetUserByUsername(ctx context.Context, username string) (*domain.Users, error)
+	DeleteUserById(ctx context.Context, id string) error
 	GetOrdersByUsername(ctx context.Context, username string) ([]*domain.Orders, error)
 	GetOrderById(ctx context.Context, id string) (*domain.Orders, error)
 	GetLog(ctx context.Context) ([]*domain.Hit, error)

@@ -244,3 +244,12 @@ func (ctrl *ControllerImpl) AddOrders(c *fiber.Ctx) error {
 
 	return web.SuccessResponse[any](c, fiber.StatusNoContent, "ok", "Success")
 }
+
+func (ctrl *ControllerImpl) DeleteUserById(c *fiber.Ctx) error {
+	userId := c.Params("id")
+	if err := ctrl.svc.DeleteUserById(c.Context(), userId); err != nil {
+		return web.ErrorResponse(c, fiber.StatusBadRequest, "error", "cannot delete user")
+	}
+
+	return web.SuccessResponse[any](c, fiber.StatusNoContent, "ok", "success delete user")
+}

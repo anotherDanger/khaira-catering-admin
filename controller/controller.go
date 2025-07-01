@@ -17,4 +17,5 @@ type Controller interface {
 	GetOrderById(c *fiber.Ctx) error
 	GetLog(c *fiber.Ctx) error
 	AddOrders(c *fiber.Ctx) error
+	DeleteUserById(c *fiber.Ctx) error
 }

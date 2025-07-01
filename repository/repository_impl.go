@@ -293,3 +293,23 @@ func (repo *RepositoryImpl) AddOrders(ctx context.Context, tx *sql.Tx, orderDeta
 
 	return nil
 }
+
+func (repo *RepositoryImpl) DeleteUserById(ctx context.Context, db *sql.DB, id string) error {
+	query := "DELETE FROM users WHERE id = ?"
+	result, err := db.ExecContext(ctx, query, id)
+	if err != nil {
+		logger.GetLogger("repository-log").Log("delete user", "error", err.Error())
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		logger.GetLogger("repository-log").Log("delete user", "error", err.Error())
+		return err
+	}
+
+	return nil
+}

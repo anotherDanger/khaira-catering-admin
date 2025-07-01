@@ -220,3 +220,13 @@ func (svc *ServiceImpl) AddOrders(ctx context.Context, orderDetails *domain.Orde
 	}
 	return nil
 }
+
+func (svc *ServiceImpl) DeleteUserById(ctx context.Context, id string) error {
+	err := svc.repo.DeleteUserById(ctx, svc.db, id)
+	if err != nil {
+		logger.GetLogger("service-log").Log("delete user", "error", err.Error())
+		return err
+	}
+
+	return nil
+}

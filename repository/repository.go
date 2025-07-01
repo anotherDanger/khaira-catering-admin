@@ -22,5 +22,6 @@ type Repository interface {
 	GetOrderById(ctx context.Context, db *sql.DB, id string) (*domain.Orders, error)
 	GetUsers(ctx context.Context, db *sql.DB) ([]*domain.Users, error)
 	GetUserByUsername(ctx context.Context, db *sql.DB, username string) (*domain.Users, error)
+	DeleteUserById(ctx context.Context, db *sql.DB, id string) error
 	GetLog(ctx context.Context) ([]*domain.Hit, error)
 }
