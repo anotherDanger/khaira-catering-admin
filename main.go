@@ -41,7 +41,7 @@ func NewServer(handler controller.Controller) *fiber.App {
 
 	protectedRoute.Get("/v1/users", handler.GetUsers)
 	protectedRoute.Get("/v1/users/:username", handler.GetUserByUsername)
-	protectedRoute.Delete("/v1/users/:id", handler.DeleteUserById)
+	protectedRoute.Delete("/v1/users/delete/:id", handler.DeleteUserById)
 
 	protectedRoute.Get("/v1/logs", handler.GetLog)
 
