@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/elastic/go-elasticsearch/v9"
+	"github.com/google/uuid"
 )
 
 type RepositoryImpl struct {
@@ -267,4 +268,28 @@ func (repo *RepositoryImpl) GetLog(ctx context.Context) ([]*domain.Hit, error) {
 	}
 
 	return hits, nil
+}
+
+func (repo *RepositoryImpl) AddOrders(ctx context.Context, tx *sql.Tx, orderDetails *domain.Orders, id uuid.UUID) error {
+	query := "INSERT INTO orders(id, product_id, product_name, name, phone, alamat, kecamatan, desa, username, quantity, total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	_, err := tx.ExecContext(ctx, query, id, orderDetails.ProductId, orderDetails.ProductName, orderDetails.Name, orderDetails.Phone, orderDetails.Alamat, orderDetails.Kecamatan, orderDetails.Desa, orderDetails.Username, orderDetails.Quantity, orderDetails.Total)
+	if err != nil {
+		return err
+	}
+
+	updateStockQuery := "UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?"
+	result, err := tx.ExecContext(ctx, updateStockQuery, orderDetails.Quantity, orderDetails.ProductId, orderDetails.Quantity)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return fmt.Errorf("stok tidak mencukupi untuk produk %s", orderDetails.ProductId)
+	}
+
+	return nil
 }

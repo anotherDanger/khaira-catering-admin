@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"khaira-admin/domain"
+
+	"github.com/google/uuid"
 )
 
 type Repository interface {
@@ -13,6 +15,7 @@ type Repository interface {
 	DeleteProduct(ctx context.Context, tx *sql.Tx, id string) error
 	UpdateProduct(ctx context.Context, tx *sql.Tx, entity *domain.Domain, id string) (*domain.Domain, error)
 	GetOrders(ctx context.Context, db *sql.DB) ([]*domain.Orders, error)
+	AddOrders(ctx context.Context, tx *sql.Tx, entity *domain.Orders, id uuid.UUID) error
 	UpdateOrder(ctx context.Context, tx *sql.Tx, entity *domain.Orders, id string) error
 	DeleteOrder(ctx context.Context, tx *sql.Tx, id string) error
 	GetOrderByUsername(ctx context.Context, db *sql.DB, username string) ([]*domain.Orders, error)

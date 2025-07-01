@@ -12,6 +12,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type ServiceImpl struct {
@@ -195,4 +197,26 @@ func (svc *ServiceImpl) GetLog(ctx context.Context) ([]*domain.Hit, error) {
 	}
 
 	return result, nil
+}
+
+func (svc *ServiceImpl) AddOrders(ctx context.Context, orderDetails *domain.Orders) error {
+	tx, err := svc.db.Begin()
+	if err != nil {
+		logger.GetLogger("service-log").Log("add order", "error", err.Error())
+		return err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		} else {
+			tx.Commit()
+		}
+	}()
+	id := uuid.New()
+	err = svc.repo.AddOrders(ctx, tx, orderDetails, id)
+	if err != nil {
+		logger.GetLogger("service-log").Log("add order", "error", err.Error())
+		return err
+	}
+	return nil
 }
