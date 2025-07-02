@@ -287,8 +287,18 @@ func (repo *RepositoryImpl) AddOrders(ctx context.Context, tx *sql.Tx, orderDeta
 	if err != nil {
 		return err
 	}
+
 	if rowsAffected == 0 {
-		return fmt.Errorf("stok tidak mencukupi untuk produk %s", orderDetails.ProductId)
+		var productExists int
+		checkQuery := "SELECT COUNT(*) FROM products WHERE id = ?"
+		err := tx.QueryRowContext(ctx, checkQuery, orderDetails.ProductId).Scan(&productExists)
+		if err != nil {
+			return err
+		}
+
+		if productExists > 0 {
+			return fmt.Errorf("stok tidak mencukupi untuk produk %s", orderDetails.ProductId)
+		}
 	}
 
 	return nil
