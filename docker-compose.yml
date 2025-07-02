@@ -20,7 +20,7 @@ services:
     restart: on-failure
 
   khaira-user:
-    image: ghcr.io/anotherdanger/khaira-user:dev10
+    image: ghcr.io/anotherdanger/khaira-user:dev11
     container_name: khaira-user
     env_file:
       - .env
