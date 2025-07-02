@@ -26,6 +26,6 @@ type Orders struct {
 	Quantity    int        `json:"quantity"`
 	Total       float64    `json:"total" validate:"required"`
 	Status      string     `json:"status"`
-	CreatedAt   *time.Time `json:"created_at" validate:"required"`
-	ModifiedAt  *time.Time `json:"modified_at" validate:"required"`
+	CreatedAt   *time.Time `json:"created_at"`
+	ModifiedAt  *time.Time `json:"modified_at"`
 }

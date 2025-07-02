@@ -233,10 +233,6 @@ func (ctrl *ControllerImpl) AddOrders(c *fiber.Ctx) error {
 		return web.ErrorResponse(c, fiber.StatusBadRequest, "error", err.Error())
 	}
 
-	if err := helper.ValidateStruct(order); err != nil {
-		return web.ErrorResponse(c, fiber.StatusBadRequest, "error", "validation failed: invalid input")
-	}
-
 	err = ctrl.svc.AddOrders(c.Context(), &order)
 	if err != nil {
 		return web.ErrorResponse(c, fiber.StatusBadRequest, "error", err.Error())
