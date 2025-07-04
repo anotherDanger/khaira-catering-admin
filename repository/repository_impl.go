@@ -244,7 +244,7 @@ func (repo *RepositoryImpl) GetLog(ctx context.Context) ([]*domain.Hit, error) {
 
 	res, err := repo.elastic.Search(
 		repo.elastic.Search.WithContext(ctx),
-		repo.elastic.Search.WithIndex("repository-log"),
+		repo.elastic.Search.WithIndex("repository-log,service-log"),
 		repo.elastic.Search.WithBody(strings.NewReader(query)),
 		repo.elastic.Search.WithTrackTotalHits(true),
 	)
