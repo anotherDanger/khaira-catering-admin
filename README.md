@@ -1,5 +1,4 @@
-docker compose usage:
-
+```yaml
 version: '2.4'
 
 services:
